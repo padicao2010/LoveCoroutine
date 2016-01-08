@@ -1,5 +1,5 @@
 local text = "Hello, World!"
-local x, y = 100, 100
+local x, y = 300, 300
 local vx, vy = 0, 0
 
 local LC = require("LoveCoroutine")()
@@ -21,7 +21,10 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.circle("fill", x, y, 10)
+    love.graphics.print("Use left, right, up down to move ball in 1s", 100, 100)
+    love.graphics.print("Use space to move ball in a circle", 100, 150)
+    love.graphics.print("Use return to reset", 100, 200)
+    love.graphics.circle("fill", x, y, 20)
     --love.graphics.print(text, math.floor(x), math.floor(y))
 end
 
@@ -52,7 +55,7 @@ function love.keypressed(key)
             end)
     elseif key == "return" then
         LC:clear()
-        x, y, vx, vy = 100, 100, 0, 0
+        x, y, vx, vy = 300, 300, 0, 0
     elseif key == "space" then
         LC:run(function()
                 local v = 2 * math.pi * 100 / 5 / 100
