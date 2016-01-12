@@ -1,6 +1,10 @@
 local text = "Hello, World!"
 local x, y = 300, 300
 local vx, vy = 0, 0
+local size = 20
+
+local increaseTask, decreaseTask, regularTask, runTask
+local incTaskState, decTaskState, regTaskState, runTaskState
 
 local LC = require("LoveCoroutine")()
 
@@ -12,19 +16,53 @@ function love.load()
                 LC:waitTime(1)
             end
         end)
+    increaseTask = LC:run(function()
+            while true do
+                LC:waitSignal("increase")
+                size = size + 10
+                LC:waitNextFrame()
+            end
+        end)
+    decreaseTask = LC:run(function()
+            while true do
+                LC:waitSignal("decrease")
+                size = math.max(size - 10, 10)
+                LC:waitNextFrame()
+            end
+        end)
+    regularTask = LC:run(function()
+            while true do
+                vx = vx + 40
+                LC:waitTime(1)
+                vx = vx - 40
+                LC:waitTime(0.5)
+                vx = vx - 40
+                LC:waitTime(1)
+                vx = vx + 40
+                LC:waitTime(0.5)
+            end
+        end)
+    runTask = LC:run(function()
+            while true do
+                local dt = LC:waitNextFrame()
+                x = x + vx * dt
+                y = y + vy * dt
+            end
+        end)
 end
 
 function love.update(dt)
     LC:update(dt)
-    x = x + vx * dt
-    y = y + vy * dt
 end
 
 function love.draw()
-    love.graphics.print("Use left, right, up down to move ball in 1s", 100, 100)
-    love.graphics.print("Use space to move ball in a circle", 100, 150)
-    love.graphics.print("Use return to reset", 100, 200)
-    love.graphics.circle("fill", x, y, 20)
+    love.graphics.print("left, right, up, down : move ball in 1s", 100, 100)
+    love.graphics.print("space : move ball in a circle", 100, 125)
+    love.graphics.print("return : reset", 100, 150)
+    love.graphics.print("home, end : scale ball", 100, 175)
+    love.graphics.print("a : enable/disable scale and normal move", 100, 200)
+    love.graphics.print("b : enable/disable move", 100, 225)
+    love.graphics.circle("fill", x, y, size)
     --love.graphics.print(text, math.floor(x), math.floor(y))
 end
 
@@ -75,5 +113,32 @@ function love.keypressed(key)
                 vx = vx - lastvx
                 vy = vy - lastvy
             end)
+    elseif key == "home" then
+        print("HOME")
+        LC:run(function()
+            LC:sendSignal("increase")
+        end)
+    elseif key == "end"  then
+        LC:sendSignal("decrease")
+    elseif key == "a" then
+        if not incTaskState then
+            incTaskState = LC:stop(increaseTask)
+            decTaskState = LC:stop(decreaseTask)
+            regTaskState = LC:stop(regularTask)
+        else
+            LC:resume(increaseTask, incTaskState)
+            LC:resume(decreaseTask, decTaskState)
+            LC:resume(regularTask, regTaskState)
+            incTaskState = nil
+            decTaskState = nil
+            regTaskState = nil
+        end
+    elseif key == "b" then
+        if not runTaskState then
+            runTaskState = LC:stop(runTask)
+        else
+            LC:resume(runTask, runTaskState)
+            runTaskState = nil
+        end
     end
 end

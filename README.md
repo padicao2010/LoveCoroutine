@@ -80,7 +80,7 @@ run a serial of actions:
 local co = lc.run(func, ...)
 ```
 
-make it work:
+make it work, LoveCoroutine.update is recommended to be put in the beginning of love.update:
 
 ```lua
 function love.update(dt)
@@ -122,6 +122,53 @@ Wait multiple seconds, return the deviation, not less than 0:
 local deviation = lc:waitTime(seconds)
 ```
 
-### License
+Wait for signal, returns arguments attached with the signal:
+
+```lua
+LC:waitSignal(signal)
+```
+
+Send Signal, can attach some arguments. **LoveCoroutine.sendSignal can also be put in the main routine**:
+
+```lua
+LC:sendSignal(signal, ...)
+```
+
+## Some restrictions
+
+LoveCoroutine makes some restrictions. LoveCoroutine.update requires to be put in the beginning of the love.udpate, 
+in order to make sure that all waitNextFrame will be waken up in next frame, 
+all waitTime will be waken up in the specific time, all tasks waiting for a signal will be waken up by that signal.
+
+In one frame, if a task call waitNextFrame before LoveCoroutine, the task will be waken up in the same frame.
+
+For signal, one signal will wakes up all tasks in the same frame, no matter call waitSignal before or after the sending time.
+
+That means, the following code will go into a death cycle:
+
+```lua
+LC:run(function()
+    while true do
+        LC:waitSignal("a")
+        text = text .. "a"
+    end
+end)
+LC:sendSignal("a")
+```
+
+It should be like this:
+
+```lua
+LC:run(function()
+    while true do
+        LC:waitSignal("a")
+        text = text .. "a"
+        LC:waitNextFrame()
+    end
+end)
+LC:sendSignal("a")
+```
+
+## License
 
 The MIT License (MIT)
