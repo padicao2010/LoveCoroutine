@@ -29,19 +29,19 @@ end
 With LoveCoroutine:
 
 ```lua
-local LC = require("LoveCoroutine")()
-LC:run(function()
+local lc = require("LoveCoroutine")()
+lc:run(function()
         A:moveDown()
-        LC:waitTime(3)
+        lc:waitTime(3)
         A:moveRight()
-        LC:waitTime(2)
+        lc:waitTime(2)
         A:moveDown()
-        LC:waitTime(1)
+        lc:waitTime(1)
         -- Other actions
     end)
     
 function love.update(dt)
-    LC:update(dt)
+    lc:update(dt)
 end
 ```
 
@@ -69,8 +69,8 @@ Also, coroutine is the standard library in lua, but not in LÖVE.
 initialize:
 
 ```lua
-LC = require("LoveCoroutine")
-local lc = LC()
+LoveCoroutine = require("LoveCoroutine")
+local lc = LoveCoroutine()
 ```
 
 run a serial of actions:
@@ -125,13 +125,13 @@ local deviation = lc:waitTime(seconds)
 Wait for signal, returns arguments attached with the signal:
 
 ```lua
-LC:waitSignal(signal)
+lc:waitSignal(signal)
 ```
 
 Send Signal, can attach some arguments. **LoveCoroutine.sendSignal can also be put in the main routine**:
 
 ```lua
-LC:sendSignal(signal, ...)
+lc:sendSignal(signal, ...)
 ```
 
 ## Some restrictions
@@ -147,26 +147,26 @@ For signal, one signal will wakes up all tasks in the same frame, no matter call
 That means, the following code will go into a death cycle:
 
 ```lua
-LC:run(function()
+lc:run(function()
     while true do
-        LC:waitSignal("a")
+        lc:waitSignal("a")
         text = text .. "a"
     end
 end)
-LC:sendSignal("a")
+lc:sendSignal("a")
 ```
 
 It should be like this:
 
 ```lua
-LC:run(function()
+lc:run(function()
     while true do
-        LC:waitSignal("a")
+        lc:waitSignal("a")
         text = text .. "a"
-        LC:waitNextFrame()
+        lc:waitNextFrame()
     end
 end)
-LC:sendSignal("a")
+lc:sendSignal("a")
 ```
 
 ## Next step
