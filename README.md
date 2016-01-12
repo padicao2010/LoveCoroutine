@@ -140,9 +140,9 @@ LoveCoroutine makes some restrictions. LoveCoroutine.update requires to be put i
 in order to make sure that all waitNextFrame will be waken up in next frame, 
 all waitTime will be waken up in the specific time, all tasks waiting for a signal will be waken up by that signal.
 
-In one frame, if a task call waitNextFrame before LoveCoroutine, the task will be waken up in the same frame.
+In one frame, if a task call waitNextFrame before LoveCoroutine.update, the task will be waken up in the same frame.
 
-For signal, one signal will wakes up all tasks in the same frame, no matter call waitSignal before or after the sending time.
+For signal, one signal will wake up all tasks in the same frame, no matter they call waitSignal before or after the sending time.
 
 That means, the following code will go into a death cycle:
 
@@ -156,7 +156,7 @@ end)
 lc:sendSignal("a")
 ```
 
-It should be like this:
+It should be fixed like this:
 
 ```lua
 lc:run(function()
