@@ -80,7 +80,7 @@ run a serial of actions:
 local co = lc.run(func, ...)
 ```
 
-make it work, LoveCoroutine.update is recommended to be put in the beginning of love.update:
+make it work, **LoveCoroutine.update is recommended to be put in the beginning of love.update**:
 
 ```lua
 function love.update(dt)
@@ -94,16 +94,16 @@ clean all tasks:
 lc:clean()
 ```
 
-pause or stop a task:
+pause or stop a task, return a state for resume. If it return nil, it means LoveCoroutine cannot find the specific task:
 
 ```lua
-lc:stop(co)
+local state = lc:stop(co)
 ```
 
-resume a paused task:
+resume a paused task. It return true if succeed, and nil means LoveCoroutine cannot resume the task, maybe because the task is done, or the state is unrecognized:
 
 ```lua
-lc:resume(co)
+lc:resume(co, state)
 ```
 
 ### Used in the subroutine
@@ -168,6 +168,11 @@ LC:run(function()
 end)
 LC:sendSignal("a")
 ```
+
+## Next step
+
+* Fix BUG if found
+* So much `while true do ... end` is ugly. It can be improved, but I have no idea right now.
 
 ## License
 

@@ -73,8 +73,6 @@ function LC:resume(co, argu)
             addSignalTask(self.signaltasks, argu, co)
         end
         return true
-    else
-        return false
     end
 end
 
