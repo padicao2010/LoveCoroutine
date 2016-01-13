@@ -60,27 +60,27 @@ Also, coroutine is the standard library in lua, but not in LÖVE.
 
 ## Dependencies
 
-* middlebox. (However, it is easy to remove such dependency)
+* [middleclass](https://github.com/kikito/middleclass). (However, it is easy to remove such dependency)
 
 ## API
 
 ### Used in the main routine
 
-initialize:
+Initialize:
 
 ```lua
 LoveCoroutine = require("LoveCoroutine")
 local lc = LoveCoroutine()
 ```
 
-run a serial of actions:
+Run a serial of actions:
 
 ```lua
--- func consumes the extra parameters, return the task
+-- func consumes all the extra parameters, return the task
 local co = lc.run(func, ...)
 ```
 
-make it work, **LoveCoroutine.update is recommended to be put in the beginning of love.update**:
+Make it work in love.update (**LoveCoroutine.update is recommended to be put in the beginning of love.update**):
 
 ```lua
 function love.update(dt)
@@ -88,19 +88,19 @@ function love.update(dt)
 end
 ```
 
-clean all tasks:
+Clean all tasks:
 
 ```lua
 lc:clean()
 ```
 
-pause or stop a task, return a state for resume. If it return nil, it means LoveCoroutine cannot find the specific task:
+Pause or stop a task, return a state for resume. If it returns nil, it means LoveCoroutine cannot find the specific task:
 
 ```lua
 local state = lc:stop(co)
 ```
 
-resume a paused task. It return true if succeed, and nil means LoveCoroutine cannot resume the task, maybe because the task is done, or the state is unrecognized:
+Resume a paused task. It returns true if succeed, and nil means LoveCoroutine cannot resume the task, maybe because the task is done, or the state is unrecognized:
 
 ```lua
 lc:resume(co, state)
@@ -108,7 +108,7 @@ lc:resume(co, state)
 
 ### Used in the subroutine
 
-Following functions can only be used in the function provided to LoveRoutine:run.
+Following APIs can only be used in the function provided to LoveRoutine:run.
 
 Wait until next frame, return the time between the last two frames, always provided by love.update:
 
@@ -128,7 +128,7 @@ Wait for signal, returns arguments attached with the signal:
 lc:waitSignal(signal)
 ```
 
-Send Signal, can attach some arguments. **LoveCoroutine.sendSignal can also be put in the main routine**:
+Send Signal, can attach some arguments. (**LoveCoroutine.sendSignal can also be put in the main routine**):
 
 ```lua
 lc:sendSignal(signal, ...)
@@ -141,6 +141,7 @@ in order to make sure that all waitNextFrame will be waken up in next frame,
 all waitTime will be waken up in the specific time, all tasks waiting for a signal will be waken up by that signal.
 
 In one frame, if a task call waitNextFrame before LoveCoroutine.update, the task will be waken up in the same frame.
+If a task call waitTime before LoveCoroutine.update, the task will skil one frame.
 
 For signal, one signal will wake up all tasks in the same frame, no matter they call waitSignal before or after the sending time.
 
