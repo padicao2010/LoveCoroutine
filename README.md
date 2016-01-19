@@ -58,9 +58,6 @@ Number of coroutines | cpu | memory | avgFPS | maxFPS | minFPS
 
 Also, coroutine is the standard library in lua, but not in LÖVE.
 
-## Dependencies
-
-* [middleclass](https://github.com/kikito/middleclass). (However, it is easy to remove such dependency)
 
 ## API
 
@@ -77,7 +74,7 @@ Run a serial of actions:
 
 ```lua
 -- func consumes all the extra parameters, return the task
-local co = lc.run(func, ...)
+local co = lc:run(func, ...)
 ```
 
 Make it work in love.update (**LoveCoroutine.update is recommended to be put in the beginning of love.update**):

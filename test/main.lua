@@ -92,8 +92,7 @@ function love.keypressed(key)
                 vx = vx - 40
             end)
     elseif key == "return" then
-        LC:clear()
-        x, y, vx, vy = 300, 300, 0, 0
+        x, y = 300, 300
     elseif key == "space" then
         LC:run(function()
                 local v = 2 * math.pi * 100 / 5 / 100

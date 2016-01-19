@@ -1,13 +1,22 @@
-local MC = require("middleclass")
-local LC = MC("LoveCoroutine")
+local LC = {}
+LC.__index = LC
 
-function LC:initialize()
-    self.times = {}
-    self.frames = {}
-    
-    self.signals = {}
-    self.signaltasks = {}
-    self.signaltasks2 = {}
+setmetatable(LC, {
+        __call = function(cls)
+            return cls:new()
+        end
+})
+
+function LC:new()
+    local t = { 
+        times = {}, 
+        frames = {}, 
+        signals = {}, 
+        signaltasks = {}, 
+        signaltasks2 = {} 
+    }
+    setmetatable(t, LC)
+    return t
 end
 
 function LC:run(f, ...)
